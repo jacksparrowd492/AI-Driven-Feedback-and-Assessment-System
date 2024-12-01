@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with the Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Merienda&display=swap" rel="stylesheet"> <!-- Google Font -->
+    <style>
+        body {
+            font-family: 'Merienda', cursive;
+            background: linear-gradient(135deg, #FAF4EB 25%, #FFE1D3 75%);
+            color: #5C4033;
+            overflow: hidden; /* Hide overflow from animations */
+        }
+
+        #chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 600px;
+            margin: auto;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 2.5s;
+        }
+
+        #chatbox {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #user-input-container {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            background: #f9f9f9;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            margin-right: 10px;
+            outline: none;
+        }
+
+        #send-button,
+        #upload-button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            background-color: #5C4033;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #send-button:hover,
+        #upload-button:hover {
+            background-color: #8B6F62;
+        }
+
+        .message {
+            margin: 10px 0;
+            max-width: 75%;
+            padding: 10px;
+            border-radius: 10px;
+            line-height: 1.5;
+        }
+
+        .user-message {
+            background-color: #e6e6ff;
+            align-self: flex-end;
+        }
+
+        .bot-message {
+            background-color: #d4f0d4;
+            align-self: flex-start;
+        }
+
+        h3 {
+            margin: 20px;
+        }
+
+        .file-upload {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        /* Fade in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(92, 64, 51, 0.4); /* Light brown circles */
+            animation: move 10s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(92, 64, 51, 0.5);
+        }
+
+        /* Different sizes for the shapes */
+        .floating-shape.small {
+            width: 40px;
+            height: 40px;
+        }
+
+        .floating-shape.medium {
+            width: 80px;
+            height: 80px;
+        }
+
+        .floating-shape.large {
+            width: 120px;
+            height: 120px;
+        }
+
+        /* Keyframes for the floating animation */
+        @keyframes move {
+            0% {
+                transform: translateY(0) translateX(0);
+            }
+            50% {
+                transform: translateY(-20px) translateX(20px);
+            }
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+    <div id="chat-container">
+        <div id="chatbox"></div>
+        <div id="user-input-container">
+            <input type="text" id="user-input" placeholder="Type your message here..." />
+            <button id="send-button">Send</button>
+        </div>
+        <h3>Upload Essay for Feedback:</h3>
+        <div class="file-upload">
+            <input type="file" id="file-input" accept=".txt" />
+            <button id="upload-button">Upload</button>
+        </div>
+    </div>
+
+    <script>
+        const chatbox = document.getElementById('chatbox');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const fileInput = document.getElementById('file-input');
+        const uploadButton = document.getElementById('upload-button');
+
+        sendButton.onclick = function() {
+            const inputText = userInput.value;
+            if (inputText) {
+                addMessage(inputText, 'user');
+                userInput.value = '';
+                fetch('/chat1', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ input: inputText })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    addMessage(data.response, 'bot');
+                });
+            }
+        };
+
+        uploadButton.onclick = function() {
+            const file = fileInput.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('file', file);
+                fetch('/upload1', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("File upload failed.");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    addMessage(data.feedback, 'bot');
+                })
+                .catch(error => {
+                    addMessage(error.message, 'bot');
+                });
+            }
+        };
+
+        function addMessage(message, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
+            messageDiv.textContent = message;
+            chatbox.appendChild(messageDiv);
+            chatbox.scrollTop = chatbox.scrollHeight; // Auto scroll to the bottom
+        }
+
+        // Add floating animated shapes
+        const floatingShapes = [
+            { size: 'small', top: '20%', left: '10%' },
+            { size: 'medium', top: '50%', right: '15%' },
+            { size: 'large', bottom: '20%', left: '30%' },
+            { size: 'small', top: '40%', right: '10%' },
+            { size: 'medium', bottom: '10%', right: '25%' },
+        ];
+
+        floatingShapes.forEach(shape => {
+            const div = document.createElement('div');
+            div.className = `floating-shape ${shape.size}`;
+            if (shape.top) div.style.top = shape.top;
+            if (shape.left) div.style.left = shape.left;
+            if (shape.right) div.style.right = shape.right;
+            if (shape.bottom) div.style.bottom = shape.bottom;
+            document.body.appendChild(div);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Merienda&display=swap'); /* Import Merienda font */
+
+body {
+    background-color: #1a1a1a; /* Dark background */
+    color: white; /* White text */
+    font-family: 'Merienda', cursive; /* Modern font */
+}
+
+.title {
+    font-weight: bold; /* Bold font for title */
+    letter-spacing: 2px; /* Spacing between letters */
+    text-transform: uppercase; /* Uppercase letters */
+}
+
+.subtitle {
+    font-weight: normal; /* Normal font for subtitle */
+    margin-bottom: 40px; /* Space below the subtitle */
+}
+
+.box {
+    background-color: rgba(255, 255, 255, 0.1); /* Slightly transparent white for the box */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Light border for the box */
+    border-radius: 5px; /* Rounded corners */
+    padding: 20px; /* Padding inside the box */
+}
+
+.button {
+    margin-top: 20px; /* Space above buttons */
+    font-family: 'Merienda', cursive; /* Apply Merienda font to buttons */
+}
+
+/* Media query for responsive design */
+@media (max-width: 768px) {
+    .title {
+        font-size: 2.5rem; /* Smaller title on small screens */
+    }
+
+    .subtitle {
+        font-size: 1.5rem; /* Smaller subtitle on small screens */
+    }
+}

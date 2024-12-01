@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/blaze@3.11.0/dist/blaze.min.css"> <!-- Blaze UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Merienda&display=swap" rel="stylesheet"> <!-- Google Font -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: 'Merienda', cursive;
+            background: linear-gradient(135deg, #FAF4EB 25%, #FFE1D3 75%);
+            color: #5C4033;
+            overflow: hidden; /* Hide overflow */
+            position: relative; /* For positioning of floating elements */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            z-index: 1; /* Ensure content is above floating shapes */
+        }
+
+        h1 {
+            font-size: 4rem;
+            animation: fadeIn 1.5s;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+            animation: fadeIn 2s;
+            margin-top: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            font-size: 1.25rem;
+            animation: fadeIn 2.5s;
+            margin-bottom: 1rem;
+            text-align: center; /* Center-align the transcription text */
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            animation: fadeIn 3s;
+        }
+
+        ul li {
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 5px;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .button {
+            padding: 0.75rem 1.5rem;
+            background-color: #5C4033;
+            color: white;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background-color 0.3s, transform 0.3s;
+            margin-top: 2rem;
+        }
+
+        .button:hover {
+            background-color: #8B6F62;
+            transform: translateY(-2px);
+        }
+
+        /* Floating animated shapes */
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(92, 64, 51, 0.4); /* Light brown circles */
+            animation: move 10s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(92, 64, 51, 0.5);
+        }
+
+        /* Different sizes for the shapes */
+        .floating-shape.small {
+            width: 40px;
+            height: 40px;
+        }
+
+        .floating-shape.medium {
+            width: 80px;
+            height: 80px;
+        }
+
+        .floating-shape.large {
+            width: 120px;
+            height: 120px;
+        }
+
+        /* Keyframes for the floating animation */
+        @keyframes move {
+            0% {
+                transform: translateY(0) translateX(0);
+            }
+
+            50% {
+                transform: translateY(-20px) translateX(20px);
+            }
+
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+        }
+
+        /* Fade in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Transcription</h1>
+        <p>{{ transcription }}</p>
+
+        <h2>Feedback</h2>
+        <ul>
+            {% for item in feedback %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Sentiment</h2>
+        <p>{{ sentiment }}</p>
+
+        <a href="/" class="button">Go Back</a>
+    </div>
+
+    <!-- Floating animated shapes (interactive background) -->
+    <div class="floating-shape small" style="top: 20%; left: 10%;"></div>
+    <div class="floating-shape medium" style="top: 50%; right: 15%;"></div>
+    <div class="floating-shape large" style="bottom: 20%; left: 30%;"></div>
+</body>
+
+</html>

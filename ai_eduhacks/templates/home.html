@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech Analysis Home</title>
+
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+    
+    <!-- Blaze AI -->
+    <link rel="stylesheet" href="https://unpkg.com/blaze@3.11.0/dist/blaze.min.css">
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Merienda&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        /* Basic Styling */
+        body {
+            background: #1b1e2f;
+            color: #fff; /* White font */
+            font-family: 'Merienda', cursive;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 40px;
+            text-align: center; /* Center align the hero section */
+        }
+
+        h1 {
+            font-size: 4rem;
+            color: #fff; /* Set title color to white */
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        h1::after {
+            content: '';
+            width: 60%;
+            height: 4px;
+            background-color: #00d1b2;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        p {
+            color: #fff; /* White font */
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+
+        .buttons.is-centered {
+            margin-top: 50px;
+        }
+
+        .button.is-large {
+            background-color: #00d1b2;
+            color: #fff;
+            font-size: 1.5rem;
+            padding: 15px 40px;
+            border-radius: 8px;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .button.is-large:hover {
+            background-color: #00bfa5;
+            transform: scale(1.1);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 50px;
+            color: #ccc; /* Keeping footer slightly lighter */
+            font-size: 1rem;
+            text-align: center; /* Center footer text */
+        }
+
+        /* Floating shapes */
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 204, 153, 0.2);
+            animation: float 5s infinite ease-in-out;
+        }
+
+        .floating-shape-2 {
+            background-color: rgba(255, 255, 255, 0.1);
+            animation: float-2 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+            100% { transform: translateY(0); }
+        }
+
+        @keyframes float-2 {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(30px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Constellation Background */
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        /* Feature Sections */
+        .feature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+
+        .feature-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.4s;
+            width: 30%;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 30px;
+        }
+
+        .feature-box:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-box i {
+            font-size: 3rem;
+            color: #00d1b2;
+            margin-bottom: 15px;
+        }
+
+        .feature-box h3 {
+            color: #fff; /* White font */
+            font-size: 1.8rem;
+        }
+
+        .feature-box p {
+            color: #ccc; /* Keeping description slightly lighter */
+        }
+
+        /* Highlight Hover Effects */
+        .highlight:hover {
+            color: #00d1b2;
+            transition: color 0.4s;
+        }
+
+        /* Animations */
+        .animate-title {
+            animation: fadeInDown 1.2s ease;
+        }
+
+        @keyframes fadeInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pulse {
+            animation: pulse-animation 2s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            margin: 5% auto;
+            padding: 20px;
+            width: 80%;
+            background-color: #282c36;
+            border-radius: 10px;
+            color: #fff; /* White font */
+        }
+
+        .close-modal {
+            color: #fff; /* White font */
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-modal:hover, .close-modal:focus {
+            color: #00d1b2;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Additional Floating Shapes */
+        .floating-shape-3 {
+            background-color: rgba(153, 255, 204, 0.2);
+            animation: float-3 7s infinite ease-in-out;
+        }
+
+        @keyframes float-3 {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(20px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Responsive Styling */
+        @media screen and (max-width: 768px) {
+            .feature-section {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .feature-box {
+                width: 80%;
+                margin-bottom: 20px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Canvas for constellation effect -->
+    <canvas id="canvas"></canvas>
+
+    <div class="hero animate-title">
+        <h1>welcome to FeedbacX</h1>
+        <p class="mt-4"> AI-Driven Feedback and Assessment </p>
+        <p class="mt-4">Explore our features below to get started with speech analysis:</p>
+
+        <div class="buttons is-centered">
+            <a href="#" class="button is-info is-large pulse">Get Started</a>
+        </div>
+    </div>
+
+    <!-- Feature section -->
+    <div class="feature-section">
+        <div class="feature-box" onclick="openModal('speech-recognition')">
+            <i class="fas fa-microphone-alt"></i>
+            <h3>Speech Recognition</h3>
+            <p>Analyze speeches with advanced AI technology and get accurate results.</p>
+            
+        </div>
+        <div class="feature-box" onclick="openModal('data-insights')">
+            <i class="fas fa-chart-line"></i>
+            <h3>Paragrapgh Analyser</h3>
+            <p>Help users improve their paragrphs and essays.</p>
+
+        </div>
+        <div class="feature-box" onclick="openModal('user-friendly')">
+            <i class="fas fa-user"></i>
+            <h3>Chatbot</h3>
+            <p>Ai powered Chatbot for feedback</p>
+
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="speech-recognition" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('speech-recognition')">&times;</span>
+            <h2>Speech Recognition</h2>
+            <p>Our speech recognition technology uses cutting-edge AI to deliver highly accurate transcription and analysis, enabling you to turn spoken words into actionable insights.</p>
+            <li><a href="{{ url_for('index') }}">GO THERE</a></li>
+        </div>
+    </div>
+
+    <div id="data-insights" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('data-insights')">&times;</span>
+            <h2>Paragraph Analysis</h2>
+            <p>This provides grammar checks, writing suggestions, and readability insights to help users improve their paragraphs , stories and essays.</p>
+            <li><a href="{{ url_for('essay') }}">GO THERE</a></li>
+
+        </div>
+    </div>
+
+    <div id="user-friendly" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('user-friendly')">&times;</span>
+
+            <h2>Chat Bot for feedback</h2>
+            <p>A feedback chatbot is an AI-powered conversational bot that gives feedback to users. It engages with users, understands their questions, and provides automated responses.</p>
+            <li><a href="{{ url_for('chat') }}">GO THERE</a></li>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-5">
+        <p>&copy; 2024 Speech Analysis. All rights reserved.</p>
+    </footer>
+
+    <!-- Floating shapes -->
+    <div class="floating-shape" style="top: 15%; left: 5%; width: 50px; height: 50px;"></div>
+    <div class="floating-shape" style="bottom: 25%; right: 15%; width: 80px; height: 80px;"></div>
+    <div class="floating-shape-2" style="top: 65%; left: 45%; width: 120px; height: 120px;"></div>
+    <div class="floating-shape-3" style="top: 30%; left: 75%; width: 60px; height: 60px;"></div>
+
+    <!-- JavaScript for Constellation Effect -->
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const stars = [];
+
+        function createStars() {
+            for (let i = 0; i < 250; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 2 + 2, // Ensure stars are larger
+                    velocity: Math.random() * 0.5,
+                    opacity: Math.random() * 0.8 + 0.2, // Higher opacity for better visibility
+                });
+            }
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            stars.forEach(star => {
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                ctx.fill();
+
+                star.x -= star.velocity;
+                if (star.x < 0) star.x = canvas.width;
+            });
+
+            requestAnimationFrame(drawStars);
+        }
+
+        createStars();
+        drawStars();
+
+        /* Modal Functions */
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>

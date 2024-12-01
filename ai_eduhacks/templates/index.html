@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Speech Analyzer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/blaze@3.11.0/dist/blaze.min.css"> <!-- Blaze UI -->
+    <link href="https://fonts.googleapis.com/css2?family=Merienda&display=swap" rel="stylesheet"> <!-- Google Font -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: 'Merienda', cursive;
+            background: linear-gradient(135deg, #FAF4EB 25%, #FFE1D3 75%);
+            color: #5C4033;
+            overflow: hidden; /* Hide overflow from animations */
+            position: relative; /* For absolute positioning of floating shapes */
+        }
+
+        .hero-body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 100vh;
+            position: relative;
+            z-index: 1; /* Ensure content is above floating shapes */
+        }
+
+        .title {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: fadeIn 1.5s;
+        }
+
+        .subtitle {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            animation: fadeIn 2s;
+        }
+
+        .box {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid #E0D6C6;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 2.5s;
+        }
+
+        /* Center the interactive button and form */
+        .file-input-container {
+            position: relative;
+            display: inline-block;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .file-input-container input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .custom-file-button {
+            padding: 0.75rem 2rem;
+            background-color: #5C4033;
+            color: white;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .custom-file-button:hover {
+            background-color: #8B6F62;
+            transform: translateY(-2px);
+        }
+
+        /* Blaze Styled Submit Button */
+        .c-button--file {
+            padding: 0.75rem 2rem;
+            background-color: #5C4033;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .c-button--file:hover {
+            background-color: #8B6F62;
+            transform: translateY(-2px);
+        }
+
+        /* Animated shapes for interactive background */
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(92, 64, 51, 0.4); /* Light brown circles */
+            animation: move 10s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(92, 64, 51, 0.5);
+        }
+
+        /* Different sizes for the shapes */
+        .floating-shape.small {
+            width: 40px;
+            height: 40px;
+        }
+
+        .floating-shape.medium {
+            width: 80px;
+            height: 80px;
+        }
+
+        .floating-shape.large {
+            width: 120px;
+            height: 120px;
+        }
+
+        /* Keyframes for the floating animation */
+        @keyframes move {
+            0% {
+                transform: translateY(0) translateX(0);
+            }
+
+            50% {
+                transform: translateY(-20px) translateX(20px);
+            }
+
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+        }
+
+        /* Floating shapes moving diagonally */
+        .floating-shape-2 {
+            background-color: rgba(255, 204, 153, 0.5); /* Soft cream circles */
+            animation: move-2 12s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(255, 204, 153, 0.5);
+        }
+
+        @keyframes move-2 {
+            0% {
+                transform: translateY(0) translateX(0);
+            }
+
+            50% {
+                transform: translateY(30px) translateX(-30px);
+            }
+
+            100% {
+                transform: translateY(0) translateX(0);
+            }
+        }
+
+        /* Interactive button */
+        .interactive-button {
+            padding: 0.75rem 2rem;
+            background-color: #5C4033;
+            color: white;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .interactive-button:hover {
+            background-color: #8B6F62;
+            transform: translateY(-2px);
+        }
+
+        /* Fade in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- Main interactive section -->
+    <section class="hero is-fullheight">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <h1 class="title">SPEECH ANALYZER</h1>
+                <h2 class="subtitle">Interactive Speech Recognition</h2>
+
+                <!-- Upload form with interactive button -->
+                <form action="/upload" method="POST" enctype="multipart/form-data" class="box">
+                    <div class="field">
+                        <label class="label">Choose an audio file</label>
+                        <div class="file-input-container">
+                            <button type="button" class="custom-file-button">Choose File</button>
+                            <input type="file" name="file" accept=".wav,.mp3,.ogg">
+                        </div>
+                    </div>
+                    <div class="control">
+                        <button type="submit" class="c-button c-button--file">Upload and Analyze</button>
+                    </div>
+                </form>
+
+                <h2 class="subtitle">Live Speech Recognition</h2>
+                <a href="/live" class="interactive-button">Start Live Recognition</a>
+
+                <!-- Floating animated shapes (interactive background) -->
+                <div class="floating-shape small" style="top: 20%; left: 10%;"></div>
+                <div class="floating-shape medium" style="top: 50%; right: 15%;"></div>
+                <div class="floating-shape large" style="bottom: 20%; left: 30%;"></div>
+
+                <!-- Additional animated shapes -->
+                <div class="floating-shape-2 small" style="top: 40%; right: 10%;"></div>
+                <div class="floating-shape-2 medium" style="bottom: 10%; right: 25%;"></div>
+            </div>
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">Back to Home</a>
+        </div>
+    </section>
+</body>
+
+</html>
